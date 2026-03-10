@@ -26,19 +26,13 @@ sg.Parent = CoreGui
 
 local function CreateLoadingScreen()
     local LoadFrame = Instance.new("Frame", sg)
-    LoadFrame.Size = UDim2.new(1, 0, 1, 0)
-    LoadFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+    LoadFrame.Size = UDim2.new(0, 300, 0, 300)
+    LoadFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    LoadFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     LoadFrame.BackgroundTransparency = 1
     LoadFrame.Visible = false
-    LoadFrame.ZIndex = 100
 
-    local CenterCont = Instance.new("Frame", LoadFrame)
-    CenterCont.Size = UDim2.new(0, 300, 0, 300)
-    CenterCont.Position = UDim2.new(0.5, 0, 0.5, 0)
-    CenterCont.AnchorPoint = Vector2.new(0.5, 0.5)
-    CenterCont.BackgroundTransparency = 1
-
-    local Ring = Instance.new("Frame", CenterCont)
+    local Ring = Instance.new("Frame", LoadFrame)
     Ring.Size = UDim2.new(0, 120, 0, 120)
     Ring.Position = UDim2.new(0.5, 0, 0.5, 0)
     Ring.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -48,7 +42,7 @@ local function CreateLoadingScreen()
     rStroke.Thickness = 2
     Instance.new("UICorner", Ring).CornerRadius = UDim.new(1, 0)
 
-    local Percent = Instance.new("TextLabel", CenterCont)
+    local Percent = Instance.new("TextLabel", LoadFrame)
     Percent.Size = UDim2.new(1, 0, 0, 50)
     Percent.Position = UDim2.new(0, 0, 0.5, 0)
     Percent.AnchorPoint = Vector2.new(0, 0.5)
@@ -58,19 +52,10 @@ local function CreateLoadingScreen()
     Percent.TextSize = 32
     Percent.BackgroundTransparency = 1
 
-    local Status = Instance.new("TextLabel", LoadFrame)
-    Status.Size = UDim2.new(1, 0, 0, 30)
-    Status.Position = UDim2.new(0, 0, 0.5, 100)
-    Status.Text = "LOADING..."
-    Status.TextColor3 = C.Text
-    Status.Font = Enum.Font.Code
-    Status.TextSize = 14
-    Status.BackgroundTransparency = 1
-
-    return LoadFrame, Percent, Ring, Status
+    return LoadFrame, Percent, Ring
 end
 
-local loader, percentLabel, ring, statusLabel = CreateLoadingScreen()
+local loader, percentLabel, ring = CreateLoadingScreen()
 
 local frame = Instance.new("Frame", sg)
 frame.Size = UDim2.new(0, 0, 0, 0)
@@ -86,10 +71,10 @@ fStroke.Color = C.Stroke
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 80)
 title.Position = UDim2.new(0, 0, 0, 10)
-title.Text = "yuzia_X\nSYSTEM OVERRIDE"
+title.Text = "YUZIA_X"
 title.TextColor3 = C.Accent
 title.Font = Enum.Font.GothamBold
-title.TextSize = 18
+title.TextSize = 22
 title.TextTransparency = 1
 title.BackgroundTransparency = 1
 
@@ -98,7 +83,7 @@ local function createBtn(text, pos, isAccent)
     btn.Size = UDim2.new(0, 125, 0, 36)
     btn.Position = pos
     btn.BackgroundColor3 = isAccent and C.Accent or C.BtnBG
-    btn.Text = text:upper()
+    btn.Text = text
     btn.TextColor3 = isAccent and Color3.fromRGB(0,0,0) or C.Text
     btn.Font = Enum.Font.GothamBold
     btn.TextSize = 12
@@ -106,32 +91,30 @@ local function createBtn(text, pos, isAccent)
     return btn
 end
 
-local yes = createBtn("YES", UDim2.new(0.5, 5, 0.65, 0), true)
-local no  = createBtn("NO", UDim2.new(0.5, -130, 0.65, 0), false)
+local yes = createBtn("YES", UDim2.new(0.5, 5, 0.6, 0), true)
+local no  = createBtn("NO", UDim2.new(0.5, -130, 0.6, 0), false)
 
-TweenService:Create(frame, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0, 320, 0, 160)}):Play()
+TweenService:Create(frame, TweenInfo.new(0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(0, 300, 0, 140)}):Play()
 task.wait(0.2)
 TweenService:Create(title, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
 
 local function RunSuperLoading()
     frame.Visible = false
     loader.Visible = true
-    TweenService:Create(loader, TweenInfo.new(0.4), {BackgroundTransparency = 0}):Play()
 
     for i = 0, 100, 2 do
         percentLabel.Text = i .. "%"
         local pulse = ring:Clone()
         pulse.Parent = ring.Parent
         pulse.Visible = true
-        TweenService:Create(pulse, TweenInfo.new(0.5), {Size = UDim2.new(0, 300, 0, 300), BackgroundTransparency = 1}):Play()
+        TweenService:Create(pulse, TweenInfo.new(0.5), {Size = UDim2.new(0, 250, 0, 250), BackgroundTransparency = 1}):Play()
         game:GetService("Debris"):AddItem(pulse, 0.5)
         task.wait(0.02)
     end
 
-    task.wait(0.3)
-    TweenService:Create(loader, TweenInfo.new(0.6), {BackgroundTransparency = 1}):Play()
-    TweenService:Create(blur, TweenInfo.new(0.8), {Size = 0}):Play()
-    task.wait(0.8)
+    task.wait(0.2)
+    TweenService:Create(blur, TweenInfo.new(0.5), {Size = 0}):Play()
+    task.wait(0.5)
     sg:Destroy()
 end
 
