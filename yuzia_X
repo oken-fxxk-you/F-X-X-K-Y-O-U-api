@@ -1,6 +1,5 @@
 --[[ YUZIA_X ]] 
--- 直接執行連結，加上防止快取的參數
-local url = "https://api.getpolsec.com/scripts/hosted/7d897c3ce6dc614166b76de80884633fcab2cd086cb0c9c7de1188129ce23dbc.lua"
+local url = "https://api.jnkie.com/api/v1/luascripts/public/c4918507c1f6fd3228d7321c0bc38709488700ec61ab23c25ed981aabba23cb3/download"
 
 local success, content = pcall(function() 
     return game:HttpGet(url .. "?cache=" .. tick()) 
